@@ -767,8 +767,8 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "Azure.Storage.Blobs >= 12.22.*",
-      "Npgsql >= 8.0.*"
+      "Azure.Storage.Blobs >= 12.22.2",
+      "Npgsql >= 8.0.9"
     ]
   },
   "packageFolders": {
@@ -778,11 +778,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Repos\\DmsMetricsCollector\\src\\DmsMetricsCollector.Ingestion\\DmsMetricsCollector.Ingestion.csproj",
-      "projectName": "DmsMetricsCollector.Ingestion",
-      "projectPath": "C:\\Repos\\DmsMetricsCollector\\src\\DmsMetricsCollector.Ingestion\\DmsMetricsCollector.Ingestion.csproj",
+      "projectUniqueName": "c:\\Repos\\PgSqlDiagnosticCollector\\PgSqlDiagnosticCollector.csproj",
+      "projectName": "PgSqlDiagnosticCollector",
+      "projectPath": "c:\\Repos\\PgSqlDiagnosticCollector\\PgSqlDiagnosticCollector.csproj",
       "packagesPath": "C:\\Users\\permo\\.nuget\\packages\\",
-      "outputPath": "C:\\Repos\\DmsMetricsCollector\\src\\DmsMetricsCollector.Ingestion\\obj\\",
+      "outputPath": "c:\\Repos\\PgSqlDiagnosticCollector\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -823,11 +823,11 @@
         "dependencies": {
           "Azure.Storage.Blobs": {
             "target": "Package",
-            "version": "[12.22.*, )"
+            "version": "[12.22.2, )"
           },
           "Npgsql": {
             "target": "Package",
-            "version": "[8.0.*, )"
+            "version": "[8.0.9, )"
           }
         },
         "imports": [

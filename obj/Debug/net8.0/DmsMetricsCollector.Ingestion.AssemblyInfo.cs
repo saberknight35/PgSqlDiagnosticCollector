@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DmsMetricsCollector.Ingestion")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d6cef5003b442585397e515301ef47c7465f8c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("DmsMetricsCollector.Ingestion")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DmsMetricsCollector.Ingestion")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

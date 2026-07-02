@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using Microsoft.VisualBasic.FileIO;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace DmsMetricsCollector.Ingestion;
 
@@ -119,6 +120,9 @@ internal static class LogParser
     {
         var flattened = JsonHelpers.FlattenRawPayloadToDictionary(element);
 
+        var logMessage = JsonHelpers.ReadString(flattened, ["message", "msg", "logMessage", "log_message",
+            "properties.message", "properties.msg", "properties.logMessage", "properties.log_message"]);
+
         return new LogRawRow(
             JsonHelpers.ReadString(element, ["resourceId", "resource_id", "resourceUri", "resource_uri", "resource"]) ??
             JsonHelpers.ReadString(flattened, ["resourceId", "resource_id", "resourceUri", "resource_uri", "resource"]) ??
@@ -134,17 +138,27 @@ internal static class LogParser
             JsonSerializer.Serialize(flattened),
             JsonHelpers.ReadString(flattened, ["category", "Category", "properties.category", "properties.Category"]),
             JsonHelpers.ReadString(flattened, ["operationName", "operation_name", "operation", "OperationName", "properties.operationName", "properties.OperationName"]),
-            JsonHelpers.ReadString(flattened, ["level", "severity", "logLevel", "log_level", "properties.level", "properties.severity", "properties.logLevel", "properties.log_level"]),
-            JsonHelpers.ReadString(flattened, ["errorSeverity", "error_severity", "severityText", "properties.errorSeverity", "properties.error_severity", "properties.severityText"]),
-            JsonHelpers.ReadString(flattened, ["sqlState", "sql_state", "sqlstate", "sql_state_code", "properties.sqlState", "properties.sql_state", "properties.sqlstate", "properties.sql_state_code"]),
+            JsonHelpers.ReadString(flattened, ["LogicalServerName", "logicalServerName", "logical_server_name"]),
+            JsonHelpers.ReadString(flattened, ["level", "severity", "logLevel", "log_level",
+                "properties.level", "properties.severity", "properties.logLevel", "properties.log_level",
+                "properties.errorLevel"]),
+            JsonHelpers.ReadString(flattened, ["errorSeverity", "error_severity", "severityText",
+                "properties.errorSeverity", "properties.error_severity", "properties.severityText",
+                "properties.errorLevel"]),
+            JsonHelpers.ReadString(flattened, ["sqlState", "sql_state", "sqlstate", "sql_state_code",
+                "properties.sqlState", "properties.sql_state", "properties.sqlstate", "properties.sql_state_code",
+                "properties.sqlerrcode", "sqlerrcode"]),
             JsonHelpers.ReadLong(flattened, ["processId", "process_id", "pid", "properties.processId", "properties.process_id", "properties.pid"]),
             JsonHelpers.ReadString(flattened, ["sessionId", "session_id", "properties.sessionId", "properties.session_id"]),
             JsonHelpers.ReadString(flattened, ["database", "database_name", "db", "dbname", "properties.database", "properties.database_name", "properties.db", "properties.dbname"]),
             JsonHelpers.ReadString(flattened, ["user", "user_name", "username", "properties.user", "properties.user_name", "properties.username"]),
             JsonHelpers.ReadString(flattened, ["applicationName", "application_name", "app", "properties.applicationName", "properties.application_name", "properties.app"]),
-            JsonHelpers.ReadString(flattened, ["clientAddr", "client_addr", "clientIp", "client_ip", "remoteAddr", "remote_addr", "properties.clientAddr", "properties.client_addr", "properties.clientIp", "properties.client_ip", "properties.remoteAddr", "properties.remote_addr"]),
+            JsonHelpers.ReadString(flattened, ["clientAddr", "client_addr", "clientIp", "client_ip", "remoteAddr", "remote_addr",
+                "properties.clientAddr", "properties.client_addr", "properties.clientIp", "properties.client_ip",
+                "properties.remoteAddr", "properties.remote_addr"]),
             JsonHelpers.ReadInt(flattened, ["clientPort", "client_port", "properties.clientPort", "properties.client_port"]),
-            JsonHelpers.ReadString(flattened, ["message", "msg", "logMessage", "log_message", "properties.message", "properties.msg", "properties.logMessage", "properties.log_message"]));
+            logMessage,
+            ExtractShortLogMessage(logMessage));
     }
 
     private static LogRawRow MapDelimitedRow(
@@ -154,6 +168,9 @@ internal static class LogParser
         string? defaultResourceId,
         string ingestionBatchId)
     {
+        var logMessage = JsonHelpers.ReadString(values, ["message", "msg", "logMessage", "log_message",
+            "properties.message", "properties.msg", "properties.logMessage", "properties.log_message"]);
+
         return new LogRawRow(
             JsonHelpers.ReadString(values, ["resourceId", "resource_id", "resourceUri", "resource_uri", "resource"]) ?? defaultResourceId ?? "unknown-resource",
             containerName,
@@ -164,16 +181,38 @@ internal static class LogParser
             JsonSerializer.Serialize(values),
             JsonHelpers.ReadString(values, ["category", "Category", "properties.category", "properties.Category"]),
             JsonHelpers.ReadString(values, ["operationName", "operation_name", "operation", "OperationName", "properties.operationName", "properties.OperationName"]),
-            JsonHelpers.ReadString(values, ["level", "severity", "logLevel", "log_level", "properties.level", "properties.severity", "properties.logLevel", "properties.log_level"]),
-            JsonHelpers.ReadString(values, ["errorSeverity", "error_severity", "severityText", "properties.errorSeverity", "properties.error_severity", "properties.severityText"]),
-            JsonHelpers.ReadString(values, ["sqlState", "sql_state", "sqlstate", "sql_state_code", "properties.sqlState", "properties.sql_state", "properties.sqlstate", "properties.sql_state_code"]),
+            JsonHelpers.ReadString(values, ["LogicalServerName", "logicalServerName", "logical_server_name"]),
+            JsonHelpers.ReadString(values, ["level", "severity", "logLevel", "log_level",
+                "properties.level", "properties.severity", "properties.logLevel", "properties.log_level",
+                "properties.errorLevel"]),
+            JsonHelpers.ReadString(values, ["errorSeverity", "error_severity", "severityText",
+                "properties.errorSeverity", "properties.error_severity", "properties.severityText",
+                "properties.errorLevel"]),
+            JsonHelpers.ReadString(values, ["sqlState", "sql_state", "sqlstate", "sql_state_code",
+                "properties.sqlState", "properties.sql_state", "properties.sqlstate", "properties.sql_state_code",
+                "properties.sqlerrcode", "sqlerrcode"]),
             JsonHelpers.ReadLong(values, ["processId", "process_id", "pid", "properties.processId", "properties.process_id", "properties.pid"]),
             JsonHelpers.ReadString(values, ["sessionId", "session_id", "properties.sessionId", "properties.session_id"]),
             JsonHelpers.ReadString(values, ["database", "database_name", "db", "dbname", "properties.database", "properties.database_name", "properties.db", "properties.dbname"]),
             JsonHelpers.ReadString(values, ["user", "user_name", "username", "properties.user", "properties.user_name", "properties.username"]),
             JsonHelpers.ReadString(values, ["applicationName", "application_name", "app", "properties.applicationName", "properties.application_name", "properties.app"]),
-            JsonHelpers.ReadString(values, ["clientAddr", "client_addr", "clientIp", "client_ip", "remoteAddr", "remote_addr", "properties.clientAddr", "properties.client_addr", "properties.clientIp", "properties.client_ip", "properties.remoteAddr", "properties.remote_addr"]),
+            JsonHelpers.ReadString(values, ["clientAddr", "client_addr", "clientIp", "client_ip", "remoteAddr", "remote_addr",
+                "properties.clientAddr", "properties.client_addr", "properties.clientIp", "properties.client_ip",
+                "properties.remoteAddr", "properties.remote_addr"]),
             JsonHelpers.ReadInt(values, ["clientPort", "client_port", "properties.clientPort", "properties.client_port"]),
-            JsonHelpers.ReadString(values, ["message", "msg", "logMessage", "log_message", "properties.message", "properties.msg", "properties.logMessage", "properties.log_message"]));
+            logMessage,
+            ExtractShortLogMessage(logMessage));
+    }
+
+    private static readonly Regex ShortMessageRegex = new(
+        @"-[A-Z]+:\s+([a-zA-Z][a-zA-Z ]*)",
+        RegexOptions.Compiled);
+
+    private static string? ExtractShortLogMessage(string? logMessage)
+    {
+        if (string.IsNullOrEmpty(logMessage))
+            return null;
+        var match = ShortMessageRegex.Match(logMessage);
+        return match.Success ? match.Groups[1].Value.TrimEnd() : null;
     }
 }

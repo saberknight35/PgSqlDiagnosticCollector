@@ -24,6 +24,7 @@ internal static class LogsBulkInserter
                 raw_payload_json TEXT NULL,
                 log_category TEXT NULL,
                 operation_name TEXT NULL,
+                logical_server_name TEXT NULL,
                 log_level TEXT NULL,
                 error_severity TEXT NULL,
                 sql_state TEXT NULL,
@@ -34,7 +35,8 @@ internal static class LogsBulkInserter
                 application_name TEXT NULL,
                 client_addr TEXT NULL,
                 client_port INTEGER NULL,
-                log_message TEXT NULL
+                log_message TEXT NULL,
+                short_log_message TEXT NULL
             ) ON COMMIT DROP;
             """;
 
@@ -43,7 +45,7 @@ internal static class LogsBulkInserter
             await createTempCmd.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
 
-        using (var importer = connection.BeginBinaryImport("COPY tmp_ingest_logs (resource_id, container_name, time_utc, ingestion_batch_id, blob_name, ingested_at, raw_payload_json, log_category, operation_name, log_level, error_severity, sql_state, process_id, session_id, database_name, user_name, application_name, client_addr, client_port, log_message) FROM STDIN (FORMAT BINARY)"))
+        using (var importer = connection.BeginBinaryImport("COPY tmp_ingest_logs (resource_id, container_name, time_utc, ingestion_batch_id, blob_name, ingested_at, raw_payload_json, log_category, operation_name, logical_server_name, log_level, error_severity, sql_state, process_id, session_id, database_name, user_name, application_name, client_addr, client_port, log_message, short_log_message) FROM STDIN (FORMAT BINARY)"))
         {
             foreach (var row in rows)
             {
@@ -57,6 +59,7 @@ internal static class LogsBulkInserter
                 importer.Write(row.RawPayloadJson, NpgsqlDbType.Text);
                 importer.Write(row.LogCategory, NpgsqlDbType.Text);
                 importer.Write(row.OperationName, NpgsqlDbType.Text);
+                importer.Write(row.LogicalServerName, NpgsqlDbType.Text);
                 importer.Write(row.LogLevel, NpgsqlDbType.Text);
                 importer.Write(row.ErrorSeverity, NpgsqlDbType.Text);
                 importer.Write(row.SqlState, NpgsqlDbType.Text);
@@ -68,6 +71,7 @@ internal static class LogsBulkInserter
                 importer.Write(row.ClientAddr, NpgsqlDbType.Text);
                 importer.Write(row.ClientPort, NpgsqlDbType.Integer);
                 importer.Write(row.LogMessage, NpgsqlDbType.Text);
+                importer.Write(row.ShortLogMessage, NpgsqlDbType.Text);
             }
 
             importer.Complete();
@@ -90,6 +94,7 @@ internal static class LogsBulkInserter
                     s.raw_payload_json,
                     s.log_category,
                     s.operation_name,
+                    s.logical_server_name,
                     s.log_level,
                     s.error_severity,
                     s.sql_state,
@@ -100,7 +105,8 @@ internal static class LogsBulkInserter
                     s.application_name,
                     s.client_addr,
                     s.client_port,
-                    s.log_message
+                    s.log_message,
+                    s.short_log_message
                 FROM tmp_ingest_logs s
                 ORDER BY
                     s.container_name,
@@ -120,6 +126,7 @@ internal static class LogsBulkInserter
                     raw_payload_json,
                     log_category,
                     operation_name,
+                    logical_server_name,
                     log_level,
                     error_severity,
                     sql_state,
@@ -130,7 +137,8 @@ internal static class LogsBulkInserter
                     application_name,
                     client_addr,
                     client_port,
-                    log_message
+                    log_message,
+                    short_log_message
                 )
                 SELECT
                     c.resource_id,
@@ -142,6 +150,7 @@ internal static class LogsBulkInserter
                     c.raw_payload_json,
                     c.log_category,
                     c.operation_name,
+                    c.logical_server_name,
                     c.log_level,
                     c.error_severity,
                     c.sql_state,
@@ -152,7 +161,8 @@ internal static class LogsBulkInserter
                     c.application_name,
                     c.client_addr,
                     c.client_port,
-                    c.log_message
+                    c.log_message,
+                    c.short_log_message
                 FROM candidates c
                 WHERE NOT EXISTS (
                     SELECT 1

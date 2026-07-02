@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "00X9DLZNLQg=",
+  "dgSpecHash": "XnyZ46GCTGY=",
   "success": true,
-  "projectFilePath": "c:\\Repos\\DmsMetricsCollector\\src\\DmsMetricsCollector.Ingestion\\DmsMetricsCollector.Ingestion.csproj",
+  "projectFilePath": "c:\\Repos\\PgSqlDiagnosticCollector\\PgSqlDiagnosticCollector.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\permo\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\permo\\.nuget\\packages\\azure.storage.blobs\\12.22.2\\azure.storage.blobs.12.22.2.nupkg.sha512",

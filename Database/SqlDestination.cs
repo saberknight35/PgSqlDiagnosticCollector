@@ -30,6 +30,7 @@ internal sealed record DestinationTable(string SqlConnectionString, string Schem
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS raw_payload_json TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_category TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS operation_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS logical_server_name TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_level TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS error_severity TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS sql_state TEXT;
@@ -41,6 +42,7 @@ internal sealed record DestinationTable(string SqlConnectionString, string Schem
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS client_addr TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS client_port INTEGER;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_message TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS short_log_message TEXT;
                 """
         };
 
@@ -133,6 +135,7 @@ internal static class SqlDestination
                     raw_payload_json TEXT NULL,
                     log_category TEXT NULL,
                     operation_name TEXT NULL,
+                    logical_server_name TEXT NULL,
                     log_level TEXT NULL,
                     error_severity TEXT NULL,
                     sql_state TEXT NULL,
@@ -143,7 +146,8 @@ internal static class SqlDestination
                     application_name TEXT NULL,
                     client_addr TEXT NULL,
                     client_port INTEGER NULL,
-                    log_message TEXT NULL
+                    log_message TEXT NULL,
+                    short_log_message TEXT NULL
                 );
                 """,
             IngestionKind.PgBouncerLogs => """
@@ -158,6 +162,7 @@ internal static class SqlDestination
                     raw_payload_json TEXT NULL,
                     log_category TEXT NULL,
                     operation_name TEXT NULL,
+                    logical_server_name TEXT NULL,
                     log_level TEXT NULL,
                     error_severity TEXT NULL,
                     sql_state TEXT NULL,
@@ -168,7 +173,8 @@ internal static class SqlDestination
                     application_name TEXT NULL,
                     client_addr TEXT NULL,
                     client_port INTEGER NULL,
-                    log_message TEXT NULL
+                    log_message TEXT NULL,
+                    short_log_message TEXT NULL
                 );
                 """,
             _ => throw new InvalidOperationException("alllogs is not a concrete destination")

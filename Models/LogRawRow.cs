@@ -10,6 +10,7 @@ internal sealed record LogRawRow(
     string RawPayloadJson,
     string? LogCategory,
     string? OperationName,
+    string? LogicalServerName,
     string? LogLevel,
     string? ErrorSeverity,
     string? SqlState,
@@ -20,4 +21,5 @@ internal sealed record LogRawRow(
     string? ApplicationName,
     string? ClientAddr,
     int? ClientPort,
-    string? LogMessage);
+    string? LogMessage,
+    string? ShortLogMessage);
