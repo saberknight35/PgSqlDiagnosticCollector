@@ -1,0 +1,52 @@
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.exe
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.deps.json
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.runtimeconfig.json
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.pdb
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Core.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.ClientModel.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.Memory.Data.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.csproj.AssemblyReference.cache
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.AssemblyInfoInputs.cache
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.AssemblyInfo.cs
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.csproj.CoreCompileInputs.cache
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetri.AF982D25.Up2Date
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\refint\DmsMetricsCollector.Ingestion.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.pdb
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.genruntimeconfig.cache
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\ref\DmsMetricsCollector.Ingestion.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Storage.Blobs.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Storage.Common.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.IO.Hashing.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Ris Pradipta\OneDrive - PT ECOMINDO SARANACIPTA\Ecomindo\Astra International\Codes\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Npgsql.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.exe
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.deps.json
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.runtimeconfig.json
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\DmsMetricsCollector.Ingestion.pdb
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Core.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Storage.Blobs.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Azure.Storage.Common.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\Npgsql.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.ClientModel.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.IO.Hashing.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\bin\Debug\net8.0\System.Memory.Data.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.csproj.AssemblyReference.cache
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.GeneratedMSBuildEditorConfig.editorconfig
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.AssemblyInfoInputs.cache
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.AssemblyInfo.cs
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.csproj.CoreCompileInputs.cache
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetri.AF982D25.Up2Date
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\refint\DmsMetricsCollector.Ingestion.dll
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.pdb
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\DmsMetricsCollector.Ingestion.genruntimeconfig.cache
+c:\Repos\DmsMetricsCollector\src\DmsMetricsCollector.Ingestion\obj\Debug\net8.0\ref\DmsMetricsCollector.Ingestion.dll

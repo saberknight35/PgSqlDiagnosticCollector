@@ -1,0 +1,23 @@
+namespace DmsMetricsCollector.Ingestion;
+
+internal sealed record LogRawRow(
+    string ResourceId,
+    string ContainerName,
+    DateTimeOffset TimeUtc,
+    string IngestionBatchId,
+    string BlobName,
+    DateTimeOffset IngestedAt,
+    string RawPayloadJson,
+    string? LogCategory,
+    string? OperationName,
+    string? LogLevel,
+    string? ErrorSeverity,
+    string? SqlState,
+    long? ProcessId,
+    string? SessionId,
+    string? DatabaseName,
+    string? UserName,
+    string? ApplicationName,
+    string? ClientAddr,
+    int? ClientPort,
+    string? LogMessage);
