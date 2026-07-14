@@ -3,9 +3,9 @@ using NpgsqlTypes;
 
 namespace DmsMetricsCollector.Ingestion;
 
-internal static class LogsBulkInserter
+internal static class PgBouncerLogsBulkInserter
 {
-    public static async Task<int> InsertAsync(string postgresConnectionString, string destinationTable, IReadOnlyList<LogRawRow> rows)
+    public static async Task<int> InsertAsync(string postgresConnectionString, string destinationTable, IReadOnlyList<PgBouncerLogRow> rows)
     {
         if (rows.Count == 0)
             return 0;
@@ -16,7 +16,7 @@ internal static class LogsBulkInserter
         await using var transaction = await connection.BeginTransactionAsync().ConfigureAwait(false);
 
         const string createTempSql = """
-            CREATE TEMP TABLE tmp_ingest_logs (
+            CREATE TEMP TABLE tmp_ingest_pgbouncer_logs (
                 resource_id TEXT NOT NULL,
                 container_name TEXT NOT NULL,
                 time_utc TIMESTAMPTZ NOT NULL,
@@ -28,13 +28,11 @@ internal static class LogsBulkInserter
                 operation_name TEXT NULL,
                 logical_server_name TEXT NULL,
                 log_level TEXT NULL,
-                error_severity TEXT NULL,
-                sql_state TEXT NULL,
                 process_id BIGINT NULL,
+                connection_role TEXT NULL,
                 session_id TEXT NULL,
                 database_name TEXT NULL,
                 user_name TEXT NULL,
-                application_name TEXT NULL,
                 client_addr TEXT NULL,
                 client_port INTEGER NULL,
                 log_message TEXT NULL,
@@ -47,7 +45,8 @@ internal static class LogsBulkInserter
             await createTempCmd.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
 
-        using (var importer = connection.BeginBinaryImport("COPY tmp_ingest_logs (resource_id, container_name, time_utc, ingestion_batch_id, blob_name, ingested_at, raw_payload_json, log_category, operation_name, logical_server_name, log_level, error_severity, sql_state, process_id, session_id, database_name, user_name, application_name, client_addr, client_port, log_message, short_log_message) FROM STDIN (FORMAT BINARY)"))
+        using (var importer = connection.BeginBinaryImport(
+            "COPY tmp_ingest_pgbouncer_logs (resource_id, container_name, time_utc, ingestion_batch_id, blob_name, ingested_at, raw_payload_json, log_category, operation_name, logical_server_name, log_level, process_id, connection_role, session_id, database_name, user_name, client_addr, client_port, log_message, short_log_message) FROM STDIN (FORMAT BINARY)"))
         {
             foreach (var row in rows)
             {
@@ -63,13 +62,11 @@ internal static class LogsBulkInserter
                 importer.Write(row.OperationName, NpgsqlDbType.Text);
                 importer.Write(row.LogicalServerName, NpgsqlDbType.Text);
                 importer.Write(row.LogLevel, NpgsqlDbType.Text);
-                importer.Write(row.ErrorSeverity, NpgsqlDbType.Text);
-                importer.Write(row.SqlState, NpgsqlDbType.Text);
                 importer.Write(row.ProcessId, NpgsqlDbType.Bigint);
+                importer.Write(row.ConnectionRole, NpgsqlDbType.Text);
                 importer.Write(row.SessionId, NpgsqlDbType.Text);
                 importer.Write(row.DatabaseName, NpgsqlDbType.Text);
                 importer.Write(row.UserName, NpgsqlDbType.Text);
-                importer.Write(row.ApplicationName, NpgsqlDbType.Text);
                 importer.Write(row.ClientAddr, NpgsqlDbType.Text);
                 importer.Write(row.ClientPort, NpgsqlDbType.Integer);
                 importer.Write(row.LogMessage, NpgsqlDbType.Text);
@@ -98,18 +95,16 @@ internal static class LogsBulkInserter
                     s.operation_name,
                     s.logical_server_name,
                     s.log_level,
-                    s.error_severity,
-                    s.sql_state,
                     s.process_id,
+                    s.connection_role,
                     s.session_id,
                     s.database_name,
                     s.user_name,
-                    s.application_name,
                     s.client_addr,
                     s.client_port,
                     s.log_message,
                     s.short_log_message
-                FROM tmp_ingest_logs s
+                FROM tmp_ingest_pgbouncer_logs s
                 ORDER BY
                     s.container_name,
                     s.blob_name,
@@ -130,13 +125,11 @@ internal static class LogsBulkInserter
                     operation_name,
                     logical_server_name,
                     log_level,
-                    error_severity,
-                    sql_state,
                     process_id,
+                    connection_role,
                     session_id,
                     database_name,
                     user_name,
-                    application_name,
                     client_addr,
                     client_port,
                     log_message,
@@ -154,13 +147,11 @@ internal static class LogsBulkInserter
                     c.operation_name,
                     c.logical_server_name,
                     c.log_level,
-                    c.error_severity,
-                    c.sql_state,
                     c.process_id,
+                    c.connection_role,
                     c.session_id,
                     c.database_name,
                     c.user_name,
-                    c.application_name,
                     c.client_addr,
                     c.client_port,
                     c.log_message,

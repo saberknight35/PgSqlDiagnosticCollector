@@ -24,7 +24,7 @@ internal sealed record DestinationTable(string SqlConnectionString, string Schem
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS metric_total DOUBLE PRECISION;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS metric_count DOUBLE PRECISION;
                 """,
-            _ => $"""
+            IngestionKind.PostgreSqlServerLogs => $"""
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS container_name TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS ingestion_batch_id TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS raw_payload_json TEXT;
@@ -43,7 +43,69 @@ internal sealed record DestinationTable(string SqlConnectionString, string Schem
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS client_port INTEGER;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_message TEXT;
                 ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS short_log_message TEXT;
-                """
+
+                DO $$
+                DECLARE
+                    idx_name TEXT;
+                BEGIN
+                    SELECT indexname INTO idx_name
+                    FROM pg_indexes
+                    WHERE schemaname = {LiteralString(SchemaName)}
+                      AND tablename  = {LiteralString(TableName)}
+                      AND indexdef   NOT LIKE '%md5%'
+                      AND indexdef   LIKE '%raw_payload_json%';
+
+                    IF idx_name IS NOT NULL THEN
+                        EXECUTE format('DROP INDEX IF EXISTS {quotedSchema}.%I', idx_name);
+                        EXECUTE format(
+                            'CREATE UNIQUE INDEX %I ON {tableRef} (container_name, blob_name, time_utc, md5(COALESCE(raw_payload_json, '''')))',
+                            idx_name
+                        );
+                    END IF;
+                END $$;
+                """,
+            IngestionKind.PgBouncerLogs => $"""
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS container_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS ingestion_batch_id TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS raw_payload_json TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_category TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS operation_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS logical_server_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_level TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS process_id BIGINT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS connection_role TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS session_id TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS database_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS user_name TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS client_addr TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS client_port INTEGER;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS log_message TEXT;
+                ALTER TABLE {tableRef} ADD COLUMN IF NOT EXISTS short_log_message TEXT;
+                ALTER TABLE {tableRef} DROP COLUMN IF EXISTS error_severity;
+                ALTER TABLE {tableRef} DROP COLUMN IF EXISTS sql_state;
+                ALTER TABLE {tableRef} DROP COLUMN IF EXISTS application_name;
+
+                DO $$
+                DECLARE
+                    idx_name TEXT;
+                BEGIN
+                    SELECT indexname INTO idx_name
+                    FROM pg_indexes
+                    WHERE schemaname = {LiteralString(SchemaName)}
+                      AND tablename  = {LiteralString(TableName)}
+                      AND indexdef   NOT LIKE '%md5%'
+                      AND indexdef   LIKE '%raw_payload_json%';
+
+                    IF idx_name IS NOT NULL THEN
+                        EXECUTE format('DROP INDEX IF EXISTS {quotedSchema}.%I', idx_name);
+                        EXECUTE format(
+                            'CREATE UNIQUE INDEX %I ON {tableRef} (container_name, blob_name, time_utc, md5(COALESCE(raw_payload_json, '''')))',
+                            idx_name
+                        );
+                    END IF;
+                END $$;
+                """,
+            _ => throw new InvalidOperationException($"No column migration defined for {kind}.")
         };
 
         await using var command = new NpgsqlCommand(ddl, connection);
@@ -53,6 +115,11 @@ internal sealed record DestinationTable(string SqlConnectionString, string Schem
     private static string QuoteIdentifier(string identifier)
     {
         return $"\"{identifier.Replace("\"", "\"\"")}\"";
+    }
+
+    private static string LiteralString(string value)
+    {
+        return $"'{value.Replace("'", "''")}'";
     }
 }
 
@@ -164,13 +231,11 @@ internal static class SqlDestination
                     operation_name TEXT NULL,
                     logical_server_name TEXT NULL,
                     log_level TEXT NULL,
-                    error_severity TEXT NULL,
-                    sql_state TEXT NULL,
                     process_id BIGINT NULL,
+                    connection_role TEXT NULL,
                     session_id TEXT NULL,
                     database_name TEXT NULL,
                     user_name TEXT NULL,
-                    application_name TEXT NULL,
                     client_addr TEXT NULL,
                     client_port INTEGER NULL,
                     log_message TEXT NULL,

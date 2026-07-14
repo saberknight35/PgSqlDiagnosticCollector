@@ -13,6 +13,8 @@ internal static class MetricsBulkInserter
         await using var connection = new NpgsqlConnection(postgresConnectionString);
         await connection.OpenAsync().ConfigureAwait(false);
 
+        await using var transaction = await connection.BeginTransactionAsync().ConfigureAwait(false);
+
         const string createTempSql = """
             CREATE TEMP TABLE tmp_ingest_metrics (
                 resource_id TEXT NOT NULL,
@@ -32,7 +34,7 @@ internal static class MetricsBulkInserter
             ) ON COMMIT DROP;
             """;
 
-        await using (var createTempCmd = new NpgsqlCommand(createTempSql, connection))
+        await using (var createTempCmd = new NpgsqlCommand(createTempSql, connection, transaction))
         {
             await createTempCmd.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
@@ -137,8 +139,10 @@ internal static class MetricsBulkInserter
             SELECT COUNT(*)::INT FROM inserted;
             """;
 
-        await using var insertCmd = new NpgsqlCommand(insertSql, connection);
+        await using var insertCmd = new NpgsqlCommand(insertSql, connection, transaction);
         var inserted = await insertCmd.ExecuteScalarAsync().ConfigureAwait(false);
+
+        await transaction.CommitAsync().ConfigureAwait(false);
         return inserted is int count ? count : 0;
     }
 }

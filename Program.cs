@@ -7,7 +7,7 @@ internal static class Program
 {
     public static async Task<int> Main(string[] args)
     {
-        Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] DMS ingestion run started.");
+        Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] DiagnosticLogCollector ingestion run started.");
 
         try
         {
@@ -49,6 +49,9 @@ internal static class Program
     {
         var watermarkStore = new WatermarkStore(options.WatermarkPath);
         var watermark = await watermarkStore.ReadAsync().ConfigureAwait(false);
+
+        if (options.FromUtc.HasValue)
+            watermark = new IngestionWatermark(options.FromUtc.Value, string.Empty);
 
         var containerClient = new BlobContainerClient(options.StorageConnectionString, options.ContainerName);
 
@@ -101,6 +104,29 @@ internal static class Program
                 await watermarkStore.WriteAsync(new IngestionWatermark(blob.LastModified, blob.Name)).ConfigureAwait(false);
 
                 Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] Loaded {insertedMetricRows}/{metricRows.Count} metric rows from {blob.Name}.");
+                continue;
+            }
+
+            if (options.Kind == IngestionKind.PgBouncerLogs)
+            {
+                var pgbRows = await PgBouncerLogParser.ReadRowsAsync(
+                    containerClient,
+                    blob,
+                    options.ContainerName,
+                    options.DefaultResourceId,
+                    ingestionBatchId).ConfigureAwait(false);
+
+                if (pgbRows.Count == 0)
+                {
+                    await watermarkStore.WriteAsync(new IngestionWatermark(blob.LastModified, blob.Name)).ConfigureAwait(false);
+                    continue;
+                }
+
+                var insertedPgbRows = await PgBouncerLogsBulkInserter.InsertAsync(options.PostgresConnectionString, destination.FullName, pgbRows).ConfigureAwait(false);
+                totalRows += insertedPgbRows;
+                await watermarkStore.WriteAsync(new IngestionWatermark(blob.LastModified, blob.Name)).ConfigureAwait(false);
+
+                Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] Loaded {insertedPgbRows}/{pgbRows.Count} log rows from {blob.Name}.");
                 continue;
             }
 
