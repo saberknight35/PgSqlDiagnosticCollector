@@ -1,0 +1,29 @@
+{
+  "Storage": {
+    "AccountName": "<YOUR_STORAGE_ACCOUNT_NAME>",
+    "AccountKey": "<YOUR_STORAGE_ACCOUNT_KEY>",
+    "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=<YOUR_STORAGE_ACCOUNT_NAME>;AccountKey=<YOUR_STORAGE_ACCOUNT_KEY>;EndpointSuffix=core.windows.net",
+    "Metrics": {
+      "ContainerName": "insights-metrics-pt1m",
+      "BlobPrefix": ""
+    },
+    "PostgreSqlLogs": {
+      "ContainerName": "insights-logs-postgresqllogs",
+      "BlobPrefix": ""
+    },
+    "PgBouncerLogs": {
+      "ContainerName": "insights-logs-postgresqlflexpgbouncer",
+      "BlobPrefix": ""
+    }
+  },
+  "Destination": {
+    "ConnectionString": "Host=<YOUR_POSTGRES_HOST>;Port=5432;Database=<YOUR_DATABASE>;Username=<YOUR_USERNAME>;Password=<YOUR_PASSWORD>;SslMode=Require;Maximum Pool Size=10;Application Name=dms_metrics_consolidation",
+    "WatermarkPath": "<YOUR_WATERMARK_PATH>"
+  },
+  "Ingestion": {
+    "Kind": "alllogs",
+    "StabilizationLagMinutes": 5,
+    "DefaultResourceId": "",
+    "FromUtc": "2026-07-01"
+  }
+}
