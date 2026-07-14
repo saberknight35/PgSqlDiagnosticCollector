@@ -28,3 +28,6 @@ artifacts/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local config with secrets (use ingestion.config.json.example as template)
+ingestion.config.json
