@@ -16,7 +16,8 @@ internal sealed record IngestionOptions(
     string PgBouncerLogsContainerName,
     string? PostgreSqlLogsBlobPrefix,
     string? PgBouncerLogsBlobPrefix,
-    DateTimeOffset? FromUtc)
+    DateTimeOffset? FromUtc,
+    IReadOnlyList<IngestionKind> Pipelines)
 {
     public static IngestionOptions Parse(string[] args)
     {
@@ -41,6 +42,11 @@ internal sealed record IngestionOptions(
 
         var fromUtc = ParseFromUtc(GetOptional(parsedArgs, configFile, "from", "DMS_INGESTION_FROM_UTC"));
 
+        var pipelinesRaw = GetOptional(parsedArgs, configFile, "pipelines", "DMS_INGESTION_PIPELINES");
+        var pipelines = pipelinesRaw != null
+            ? ParsePipelines(pipelinesRaw)
+            : ResolvePipelinesFromKind(kind);
+
         return new IngestionOptions(
             storageConnectionString,
             GetRequired(parsedArgs, configFile, "container", "DMS_INGESTION_CONTAINER_NAME", "insights-metrics-pt1m"),
@@ -54,7 +60,8 @@ internal sealed record IngestionOptions(
             GetOptional(parsedArgs, configFile, "pgbouncerLogsContainer", "DMS_INGESTION_PGBOUNCER_LOGS_CONTAINER_NAME") ?? "insights-logs-postgresqlflexpgbouncer",
             GetOptional(parsedArgs, configFile, "postgresLogsPrefix", "DMS_INGESTION_POSTGRESQL_LOGS_BLOB_PREFIX"),
             GetOptional(parsedArgs, configFile, "pgbouncerLogsPrefix", "DMS_INGESTION_PGBOUNCER_LOGS_BLOB_PREFIX"),
-            fromUtc);
+            fromUtc,
+            pipelines);
     }
 
     public IngestionOptions WithPipeline(IngestionKind kind, string containerName, string? blobPrefix, string watermarkPath)
@@ -104,6 +111,59 @@ internal sealed record IngestionOptions(
         };
     }
 
+    private static IReadOnlyList<IngestionKind> ParsePipelines(string raw)
+    {
+        var tokens = raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var result = new HashSet<IngestionKind>();
+
+        foreach (var token in tokens)
+        {
+            switch (token.ToLowerInvariant())
+            {
+                case "all":
+                    result.Add(IngestionKind.Metrics);
+                    result.Add(IngestionKind.PostgreSqlServerLogs);
+                    result.Add(IngestionKind.PgBouncerLogs);
+                    break;
+                case "metrics":
+                    result.Add(IngestionKind.Metrics);
+                    break;
+                case "postgresqllogs":
+                    result.Add(IngestionKind.PostgreSqlServerLogs);
+                    break;
+                case "pgbouncerlogs":
+                    result.Add(IngestionKind.PgBouncerLogs);
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Unknown pipeline token '{token}'. Valid tokens: metrics, postgresqllogs, pgbouncerlogs, all.");
+            }
+        }
+
+        if (result.Count == 0)
+            throw new InvalidOperationException(
+                "Pipelines list is empty. Provide at least one of: metrics, postgresqllogs, pgbouncerlogs, all.");
+
+        // Return in canonical order regardless of input order
+        var ordered = new List<IngestionKind>();
+        if (result.Contains(IngestionKind.Metrics))             ordered.Add(IngestionKind.Metrics);
+        if (result.Contains(IngestionKind.PostgreSqlServerLogs)) ordered.Add(IngestionKind.PostgreSqlServerLogs);
+        if (result.Contains(IngestionKind.PgBouncerLogs))        ordered.Add(IngestionKind.PgBouncerLogs);
+        return ordered;
+    }
+
+    private static IReadOnlyList<IngestionKind> ResolvePipelinesFromKind(IngestionKind kind)
+    {
+        return kind switch
+        {
+            IngestionKind.Metrics             => [IngestionKind.Metrics],
+            IngestionKind.PostgreSqlServerLogs => [IngestionKind.PostgreSqlServerLogs],
+            IngestionKind.PgBouncerLogs        => [IngestionKind.PgBouncerLogs],
+            IngestionKind.AllLogs              => [IngestionKind.PostgreSqlServerLogs, IngestionKind.PgBouncerLogs],
+            _ => throw new InvalidOperationException($"Unsupported kind '{kind}'.")
+        };
+    }
+
     private static TimeSpan ParseLag(string? raw)
     {
         if (string.IsNullOrWhiteSpace(raw))
@@ -148,6 +208,7 @@ internal sealed record IngestionOptions(
             SetIfPresent(result, "lag",                   root, "Ingestion", "StabilizationLagMinutes");
             SetIfPresent(result, "resourceId",            root, "Ingestion", "DefaultResourceId");
             SetIfPresent(result, "from",                  root, "Ingestion", "FromUtc");
+            SetIfPresent(result, "pipelines",              root, "Ingestion", "Pipelines");
 
             return result;
         }

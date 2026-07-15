@@ -13,29 +13,27 @@ internal static class Program
         {
             var options = IngestionOptions.Parse(args);
 
-            if (options.Kind == IngestionKind.AllLogs)
+            var totalRows = 0;
+            foreach (var pipeline in options.Pipelines)
             {
-                var postgresLogOptions = options.WithPipeline(
-                    IngestionKind.PostgreSqlServerLogs,
-                    options.PostgreSqlLogsContainerName,
-                    options.PostgreSqlLogsBlobPrefix,
-                    options.GetWatermarkPathFor(IngestionKind.PostgreSqlServerLogs));
+                var (containerName, blobPrefix) = pipeline switch
+                {
+                    IngestionKind.Metrics             => (options.ContainerName,                  options.BlobPrefix),
+                    IngestionKind.PostgreSqlServerLogs => (options.PostgreSqlLogsContainerName,    options.PostgreSqlLogsBlobPrefix),
+                    IngestionKind.PgBouncerLogs        => (options.PgBouncerLogsContainerName,     options.PgBouncerLogsBlobPrefix),
+                    _ => throw new InvalidOperationException($"Unexpected pipeline kind '{pipeline}'.")
+                };
 
-                var pgbouncerLogOptions = options.WithPipeline(
-                    IngestionKind.PgBouncerLogs,
-                    options.PgBouncerLogsContainerName,
-                    options.PgBouncerLogsBlobPrefix,
-                    options.GetWatermarkPathFor(IngestionKind.PgBouncerLogs));
+                var pipelineOptions = options.WithPipeline(
+                    pipeline,
+                    containerName,
+                    blobPrefix,
+                    options.GetWatermarkPathFor(pipeline));
 
-                var loadedPostgresLogs = await RunSinglePipelineAsync(postgresLogOptions).ConfigureAwait(false);
-                var loadedPgBouncerLogs = await RunSinglePipelineAsync(pgbouncerLogOptions).ConfigureAwait(false);
-
-                Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] Ingestion run completed. Rows loaded: {loadedPostgresLogs + loadedPgBouncerLogs}.");
-                return 0;
+                totalRows += await RunSinglePipelineAsync(pipelineOptions).ConfigureAwait(false);
             }
 
-            var loadedRows = await RunSinglePipelineAsync(options).ConfigureAwait(false);
-            Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] Ingestion run completed. Rows loaded: {loadedRows}.");
+            Console.WriteLine($"[{DateTimeOffset.UtcNow:O}] Ingestion run completed. Rows loaded: {totalRows}.");
             return 0;
         }
         catch (Exception ex)

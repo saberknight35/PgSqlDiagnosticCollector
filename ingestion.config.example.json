@@ -21,6 +21,7 @@
     "WatermarkPath": "<YOUR_WATERMARK_PATH>"
   },
   "Ingestion": {
+    "Pipelines": "metrics,postgresqllogs,pgbouncerlogs",
     "Kind": "alllogs",
     "StabilizationLagMinutes": 5,
     "DefaultResourceId": "",
